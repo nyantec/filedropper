@@ -2,23 +2,23 @@
 	<head></head>
 	<body>
 		<noscript>JavaScript is required</noscript>
-		<p class="error"></p>
+		<p class="status">@beforeText@</p>
 		<input type="file" name="filename">
 		<script>
 const input = document.querySelector('input[type="file"]')
-const error = document.querySelector('p.error')
+const status = document.querySelector('p.status')
 input.addEventListener('change', () => {
-  error.textContent = 'Uploading...';
+  status.textContent = 'Uploading...';
   fetch('/upload', {
     method: 'POST',
     body: input.files[0]
-  }).then(
-    response => response.text()
-  ).then(
-    success => error.textContent = success
-  ).catch(
-    error => error.textContent = error
-  );
+  })
+  .then(response => {
+    if (!response.ok) throw response.statusText;
+    return response.text();
+  })
+  .then(success => status.textContent = `@successText@`)
+  .catch(error => status.textContent = `@errorText@`);
 }, false);
 		</script>
 	</body>

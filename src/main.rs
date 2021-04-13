@@ -30,12 +30,15 @@ fn main() {
         "Maximum allowed request body size",
         "BYTES",
     );
-    opts.optflag("h", "help", "Display this help text and exit");
-    opts.optflag(
-        "v",
-        "version",
-        "Display the version of this binary and exit",
+    opts.optopt("b", "before_text", "Text shown before the upload", "TEXT");
+    opts.optopt("e", "error_text", "Text shown if an error occurs", "TEXT");
+    opts.optopt(
+        "t",
+        "success_text",
+        "Text shown after a successful upload",
+        "TEXT",
     );
+    opts.optflag("h", "help", "Display this help text and exit");
 
     let matches = match opts.parse(&args[1..]) {
         Ok(m) => m,
@@ -43,6 +46,11 @@ fn main() {
             panic!("{}", f)
         }
     };
+
+    if matches.opt_present("h") {
+        print_usage(&program, opts);
+        return;
+    }
 
     if matches.opt_present("h") {
         print_usage(&program, opts);
@@ -60,6 +68,16 @@ fn main() {
         .unwrap()
         .get_bytes();
 
+    let before_text = matches.opt_str("b").unwrap_or("".to_string());
+
+    let error_text = matches
+        .opt_str("e")
+        .unwrap_or("Error: ${error}".to_string());
+
+    let success_text = matches
+        .opt_str("t")
+        .unwrap_or("Upload successful!".to_string());
+
     let output = if !matches.free.is_empty() {
         matches.free[0].clone()
     } else {
@@ -69,7 +87,12 @@ fn main() {
 
     env_logger::init();
 
-    FileDropper::new(listen_addr, output, max_size)
+    let html = include_str!("index.html")
+        .replace("@beforeText@", &before_text)
+        .replace("@errorText@", &error_text)
+        .replace("@successText@", &success_text);
+
+    FileDropper::new(listen_addr, output, max_size, html)
         .serve()
         .unwrap_or_else(|e| {
             error!("Error: {}, exiting", e.to_string());

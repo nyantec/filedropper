@@ -17,6 +17,7 @@ pub struct FileDropper {
     listen_addr: SocketAddr,
     output: String,
     max_size: u64,
+    html: String,
 }
 
 macro_rules! resp {
@@ -42,11 +43,17 @@ macro_rules! status_resp {
 }
 
 impl FileDropper {
-    pub fn new(listen_addr: SocketAddr, output: String, max_size: u64) -> FileDropper {
+    pub fn new(
+        listen_addr: SocketAddr,
+        output: String,
+        max_size: u64,
+        html: String,
+    ) -> FileDropper {
         FileDropper {
             listen_addr,
             output,
             max_size,
+            html,
         }
     }
 
@@ -57,7 +64,7 @@ impl FileDropper {
         let (parts, req_body) = req.into_parts();
 
         let resp = match (&parts.method, parts.uri.path()) {
-            (&Method::GET, "/") => resp!(StatusCode::OK, include_str!("index.html")),
+            (&Method::GET, "/") => resp!(StatusCode::OK, self.html.clone()),
             (&Method::POST, "/upload") => self.upload(req_body, parts.headers).await,
             (&Method::GET, _) => status_resp!(StatusCode::NOT_FOUND),
             _ => status_resp!(StatusCode::METHOD_NOT_ALLOWED),
