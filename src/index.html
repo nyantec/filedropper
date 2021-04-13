@@ -8,6 +8,7 @@
 const input = document.querySelector('input[type="file"]')
 const status = document.querySelector('p.status')
 input.addEventListener('change', () => {
+  input.style.display = 'none';
   status.textContent = 'Uploading...';
   fetch('/upload', {
     method: 'POST',
@@ -17,8 +18,13 @@ input.addEventListener('change', () => {
     if (!response.ok) throw response.statusText;
     return response.text();
   })
-  .then(success => status.textContent = `@successText@`)
-  .catch(error => status.textContent = `@errorText@`);
+  .then(success => {
+    status.textContent = `@successText@`;
+  })
+  .catch(error => {
+    status.textContent = `@errorText@`
+    input.style.display = null;
+  });
 }, false);
 		</script>
 	</body>
