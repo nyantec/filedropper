@@ -1,0 +1,15 @@
+[package]
+name = "filedropper"
+version = "0.1.0"
+authors = ["Milan Pässler <mil@nyantec.com>"]
+edition = "2018"
+
+[dependencies]
+hyper = { version = "0.14", features = [ "server", "http1", "http2", "tcp", "stream" ] }
+tokio = { version = "1.5", features = [ "macros", "rt-multi-thread", "fs" ] }
+tokio-util = { version = "0.6", features = [ "io" ] }
+log = "0.4"
+env_logger = "0.8.3"
+getopts = "0.2"
+custom_error = "1.9"
+futures-util = "0.3"
