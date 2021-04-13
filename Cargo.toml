@@ -13,3 +13,5 @@ env_logger = "0.8.3"
 getopts = "0.2"
 custom_error = "1.9"
 futures-util = "0.3"
+headers = "0.3"
+byte-unit = { version = "4.0", default-features = false }

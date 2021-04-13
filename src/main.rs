@@ -4,9 +4,9 @@ mod server;
 pub use error::*;
 pub use server::FileDropper;
 
+use byte_unit::Byte;
 use getopts::Options;
 use log::error;
-use std::net::SocketAddr;
 
 fn print_usage(program: &str, opts: Options) {
     let brief = format!("Usage: {} OUTPUT [options]", program);
@@ -23,6 +23,12 @@ fn main() {
         "listen",
         "Listen on the specified sockaddr",
         "ADDR:PORT",
+    );
+    opts.optopt(
+        "s",
+        "max_size",
+        "Maximum allowed request body size",
+        "BYTES",
     );
     opts.optflag("h", "help", "Display this help text and exit");
     opts.optflag(
@@ -43,12 +49,16 @@ fn main() {
         return;
     }
 
-    let listen_addr: SocketAddr = matches
+    let listen_addr = matches
         .opt_str("l")
         .as_deref()
         .unwrap_or("127.0.0.1:3000")
         .parse()
         .unwrap();
+
+    let max_size = Byte::from_str(matches.opt_str("s").as_deref().unwrap_or("100M"))
+        .unwrap()
+        .get_bytes();
 
     let output = if !matches.free.is_empty() {
         matches.free[0].clone()
@@ -59,7 +69,7 @@ fn main() {
 
     env_logger::init();
 
-    FileDropper::new(listen_addr, output)
+    FileDropper::new(listen_addr, output, max_size)
         .serve()
         .unwrap_or_else(|e| {
             error!("Error: {}, exiting", e.to_string());
