@@ -57,8 +57,8 @@ impl FileDropper {
         let (parts, req_body) = req.into_parts();
 
         let resp = match (&parts.method, parts.uri.path()) {
-            (&Method::GET, "/") => status_resp!(StatusCode::OK),
-            (&Method::POST, "/") => self.upload(req_body, parts.headers).await,
+            (&Method::GET, "/") => resp!(StatusCode::OK, include_str!("index.html")),
+            (&Method::POST, "/upload") => self.upload(req_body, parts.headers).await,
             (&Method::GET, _) => status_resp!(StatusCode::NOT_FOUND),
             _ => status_resp!(StatusCode::METHOD_NOT_ALLOWED),
         };

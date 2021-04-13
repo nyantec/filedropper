@@ -1,0 +1,25 @@
+<html>
+	<head></head>
+	<body>
+		<noscript>JavaScript is required</noscript>
+		<p class="error"></p>
+		<input type="file" name="filename">
+		<script>
+const input = document.querySelector('input[type="file"]')
+const error = document.querySelector('p.error')
+input.addEventListener('change', () => {
+  error.textContent = 'Uploading...';
+  fetch('/upload', {
+    method: 'POST',
+    body: input.files[0]
+  }).then(
+    response => response.text()
+  ).then(
+    success => error.textContent = success
+  ).catch(
+    error => error.textContent = error
+  );
+}, false);
+		</script>
+	</body>
+</html>
