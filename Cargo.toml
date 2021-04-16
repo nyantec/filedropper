@@ -1,8 +1,9 @@
 [package]
 name = "filedropper"
 version = "0.1.0"
-authors = ["Milan Pässler <mil@nyantec.com>"]
+authors = ["The sensorlog Authors <oss@nyantec.com>"]
 edition = "2018"
+license = "MirOS"
 
 [dependencies]
 hyper = { version = "0.14", features = [ "server", "http1", "http2", "tcp", "stream" ] }
