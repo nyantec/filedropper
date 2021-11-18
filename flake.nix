@@ -1,6 +1,8 @@
 {
   description = "filedropper";
 
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable-small";
+
   outputs = { self, nixpkgs }: let
     overlay = final: prev: {
       filedropper = final.callPackage (
